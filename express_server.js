@@ -30,14 +30,20 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  const templateVars = { 
+    shortURL: req.params.shortURL.slice(1), 
+    longURL: urlDatabase[req.params.shortURL.slice(1)] 
+  };
   res.render('urls_show', templateVars)
 });
 
 app.post("/urls", (req, res) => {
   const newLinkID = generateRandomString();
   urlDatabase[newLinkID] = req.body.longURL;
-  res.redirect(`/urls/:${newLinkID}`);
+  setTimeout(() => {
+    res.redirect(`/urls/:${newLinkID}`);
+  },500)
+  
 });
 
 app.listen(PORT, () => {

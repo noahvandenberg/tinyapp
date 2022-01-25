@@ -31,19 +31,22 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { 
-    shortURL: req.params.shortURL.slice(1), 
-    longURL: urlDatabase[req.params.shortURL.slice(1)] 
+    shortURL: req.params.shortURL, 
+    longURL: urlDatabase[req.params.shortURL] 
   };
   res.render('urls_show', templateVars)
 });
 
 app.post("/urls", (req, res) => {
   const newLinkID = generateRandomString();
-  urlDatabase[newLinkID] = req.body.longURL;
-  setTimeout(() => {
-    res.redirect(`/urls/:${newLinkID}`);
-  },500)
-  
+  // Poor handling if the input has a http:// already attached
+  urlDatabase[newLinkID] = `http://${req.body.longURL}`;
+  res.redirect(`/urls/${newLinkID}`);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL]
+  res.redirect(longURL);
 });
 
 app.listen(PORT, () => {

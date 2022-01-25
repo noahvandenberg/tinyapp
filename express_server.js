@@ -5,12 +5,9 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
-
-
 function generateRandomString() {
-  return Math.random().toString(36).slice(7)
-}
-// console.log(generateRandomString())
+  return Math.random().toString(36).slice(7);
+};
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -38,8 +35,9 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  const newLinkID = generateRandomString();
+  urlDatabase[newLinkID] = req.body.longURL;
+  res.redirect(`/urls/:${newLinkID}`);
 });
 
 app.listen(PORT, () => {

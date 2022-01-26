@@ -44,7 +44,7 @@ app.post("/logout", (req, res) => {
 });
 
 // GET registration page
-app.get("/urls/new", (req, res) => {
+app.get("/register", (req, res) => {
   res.render("urls_registration");
 });
 

@@ -13,8 +13,8 @@ function generateRandomString() {
 };
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": "www.lighthouselabs.ca",
+  "9sm5xK": "www.google.com"
 };
 
 app.set('view engine', 'ejs');

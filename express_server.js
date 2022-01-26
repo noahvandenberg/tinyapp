@@ -43,6 +43,11 @@ app.post("/logout", (req, res) => {
   res.redirect('/urls')
 });
 
+// GET registration page
+app.get("/urls/new", (req, res) => {
+  res.render("urls_registration");
+});
+
 // GET new url page
 app.get("/urls/new", (req, res) => {
   const templateVars = {

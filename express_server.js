@@ -152,7 +152,10 @@ app.post("/urls", (req, res) => {
   if (req.cookies.user_id) {
     const newLinkID = generateRandomString();
     // Poor handling if the input has a http:// already attached
-    urlDatabase[newLinkID].longURL = `http://${req.body.longURL}`;
+    urlDatabase[newLinkID] = {
+      longURL: `http://${req.body.longURL}`,
+      userID: req.cookies.user_id
+  }
     res.redirect(`/urls/${newLinkID}`);
   }
 });

@@ -27,12 +27,12 @@ const users = {
 
 app.set('view engine', 'ejs');
 
-
+// Get Pages
 app.get("/", (req, res) => {
   res.redirect("/urls");
 });
 
-// GET Homepage
+//Homepage
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
@@ -42,7 +42,7 @@ app.get("/urls", (req, res) => {
   res.render('urls_index',templateVars);
 });
 
-// GET registration page
+//Registar page
 app.get("/register", (req, res) => {
   const templateVars = {
     users: users,
@@ -51,7 +51,7 @@ app.get("/register", (req, res) => {
   res.render("urls_register", templateVars);
 });
 
-// GET registration page
+//Login
 app.get("/login", (req, res) => {
   const templateVars = {
     users: users,
@@ -60,8 +60,11 @@ app.get("/login", (req, res) => {
   res.render("urls_login", templateVars);
 });
 
-// GET new url page
+//New Url
 app.get("/urls/new", (req, res) => {
+  if (!req.cookies.user_id) {
+    res.redirect('/login')
+  }
   const templateVars = {
     users: users,
     user_id: req.cookies.user_id
@@ -69,7 +72,7 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
-// GET Specific URL Page
+//Specific Url
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
@@ -80,11 +83,14 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render('urls_show', templateVars);
 });
 
-// GET sends a shortURL to a longURL
+
+
+//SENDS A SHORT URL TO LONG URL
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
+
 
 
 // Register / Login / Logout
@@ -133,6 +139,7 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:shortURL/update", (req, res) => {
+
   urlDatabase[req.params.shortURL] = req.body.longURL;
   res.redirect("/urls");
 });

@@ -17,6 +17,8 @@ const generateRandomString = () => {
   return Math.random().toString(36).slice(7);
 };
 
+const userHelpers = require('./helpers/userHelpers')
+
 
 
 const urlDatabase = {
@@ -37,8 +39,6 @@ const users = {
     password: "pushingp123",
   },
 };
-
-
 
 
 app.set('view engine', 'ejs');

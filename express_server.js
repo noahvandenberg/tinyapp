@@ -94,8 +94,14 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //SENDS A SHORT URL TO LONG URL
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
+  if (!urlDatabase[req.params.shortURL]) {
+    res.statusCode = 400;
+    res.redirect('/urls')
+  }
+  if (urlDatabase[req.params.shortURL]) {
+    const longURL = urlDatabase[req.params.shortURL].longURL;
+    res.redirect(longURL);
+  }
 });
 
 

@@ -33,12 +33,23 @@ const urlDatabase = {
 };
 
 const users = {
-  "admin" : {
-    id: "admin",
-    email: "gunna@pushingp.com",
-    password: "pushingp123",
+  "demo" : {
+    id: "demo",
+    email: "pushing@p.com",
+    password: "gunna",
   },
 };
+
+const createAdminUser = () => {
+  users.admin = {
+    id: "admin",
+    email: "noah@v.com",
+    password: bcrypt.hashSync("a", 10)
+  }
+};
+
+createAdminUser();
+console.log(users)
 
 
 app.set('view engine', 'ejs');
@@ -121,6 +132,9 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 
+
+
+
 // Register / Login / Logout
 app.post("/register", (req, res) => {
   if (req.body.email === '' || req.body.email === '') {
@@ -143,7 +157,15 @@ app.post("/register", (req, res) => {
   res.redirect('/urls');
 });
 
+
+
+
+
+
 app.post("/login", (req, res) => {
+  const userEmail = userHelpers.getUserByEmail(req.session.user_id,users)
+  console.log(userEmail)
+  console.log(req.body)
   for (const user in users) {
     if (users[user].email === req.body.email && bcrypt.compareSync(req.body.password, users[user].password) ) {
       req.session.user_id = users[user].id
@@ -152,10 +174,20 @@ app.post("/login", (req, res) => {
   res.redirect('/urls');
 });
 
+
+
+
+
+
+
+
 app.post("/logout", (req, res) => {
-  res.clearCookie('user_id');
+  req.session = null;
   res.redirect('/urls');
 });
+
+
+
 
 
 // Create / Update / Delete shortUrls

@@ -8,6 +8,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+const bcrypt = require('bcryptjs')
+
 const generateRandomString = () => {
   return Math.random().toString(36).slice(7);
 };
@@ -128,7 +130,7 @@ app.post("/register", (req, res) => {
   users[newUserId] = {
     id: newUserId,
     email: req.body.email,
-    password: req.body.password,
+    password: bcrypt.hashSync(req.body.password, 10)
   };
   res.cookie('user_id', newUserId);
   res.redirect('/urls');
@@ -136,7 +138,7 @@ app.post("/register", (req, res) => {
 
 app.post("/login", (req, res) => {
   for (const user in users) {
-    if (users[user].email === req.body.email && users[user].password === req.body.password) {
+    if (users[user].email === req.body.email && bcrypt.compareSync(req.body.password, users[user].password) ) {
       res.cookie('user_id', users[user].id);
     }
   }

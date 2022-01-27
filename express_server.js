@@ -137,24 +137,33 @@ app.get("/u/:shortURL", (req, res) => {
 
 // Register / Login / Logout
 app.post("/register", (req, res) => {
+
+  // if email doesnt exist
   if (req.body.email === '' || req.body.email === '') {
     res.statusCode = 400;
     res.redirect('/register');
   }
-  for (const user in users) {
-    if (req.body.email === users[user].email) {
-      res.statusCode = 400;
-      res.redirect('/register');
-    }
+
+  const userID = userHelpers.getUserByEmail(req.body.email,users)
+  const userEmail = users[userID].email
+
+  // if user already exists
+  if (req.body.email === userEmail) {
+    res.statusCode = 400;
+    res.redirect('/login');
   }
+
   const newUserId = generateRandomString() + generateRandomString();
+
   users[newUserId] = {
     id: newUserId,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 10)
   };
+
   req.session.user_id = newUserId
   res.redirect('/urls');
+
 });
 
 
@@ -173,7 +182,7 @@ app.post("/login", (req, res) => {
   }
 
   res.redirect('/urls');
-  
+
 });
 
 

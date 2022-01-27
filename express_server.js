@@ -108,18 +108,18 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-
   if (!req.session.user_id) {
     res.redirect('/login')
   }
 
-  const templateVars = {
-    users: users,
-    user_id: req.session.user_id
-  };
-
-  res.render("urls_new", templateVars);
-
+  if (req.session.user_id) {
+    const templateVars = {
+      users: users,
+      user_id: req.session.user_id
+    };
+  
+    res.render("urls_new", templateVars);
+  }
 });
 
 app.get("/urls/:shortURL", (req, res) => {

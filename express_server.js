@@ -58,7 +58,6 @@ console.log(users)
 
 app.set('view engine', 'ejs');
 
-// Get Pages
 app.get("/", (req, res) => {
 
   if (req.session.user_id) {
@@ -72,24 +71,6 @@ app.get("/", (req, res) => {
 
 });
 
-
-
-//Homepage
-app.get("/urls", (req, res) => {
-
-  const usersUrls = userHelpers.getUrlsByUser(req.session.user_id, urlDatabase)
-
-  const templateVars = {
-    urls: usersUrls,
-    users: users,
-    user_id: req.session.user_id
-  };
-
-  res.render('urls_index',templateVars);
-
-});
-
-//Registar page
 app.get("/register", (req, res) => {
   const templateVars = {
     users: users,
@@ -98,7 +79,6 @@ app.get("/register", (req, res) => {
   res.render("urls_register", templateVars);
 });
 
-//Login
 app.get("/login", (req, res) => {
   const templateVars = {
     users: users,
@@ -107,32 +87,53 @@ app.get("/login", (req, res) => {
   res.render("urls_login", templateVars);
 });
 
-//New Url
+app.get("/urls", (req, res) => {
+
+  if (!req.session.user_id) {
+    //SHOULD REDIRECT TO RELEVENT ERROR PAGE
+    res.redirect('/login')
+  }
+
+  if (req.session.user_id) {
+    const usersUrls = userHelpers.getUrlsByUser(req.session.user_id, urlDatabase)
+
+    const templateVars = {
+      urls: usersUrls,
+      users: users,
+      user_id: req.session.user_id
+    };
+  
+    res.render('urls_index',templateVars);
+  }
+});
+
 app.get("/urls/new", (req, res) => {
+
   if (!req.session.user_id) {
     res.redirect('/login')
   }
+
   const templateVars = {
     users: users,
     user_id: req.session.user_id
   };
+
   res.render("urls_new", templateVars);
+
 });
 
-//Specific Url
 app.get("/urls/:shortURL", (req, res) => {
+
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
     users: users,
     user_id: req.session.user_id
   };
+
   res.render('urls_show', templateVars);
 });
 
-
-
-//SENDS A SHORT URL TO LONG URL
 app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase[req.params.shortURL]) {
     res.statusCode = 400;

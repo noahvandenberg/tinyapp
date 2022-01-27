@@ -167,13 +167,33 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:shortURL/update", (req, res) => {
-  urlDatabase[req.params.shortURL].longURL = req.body.longURL;
+  if (!req.cookies.user_id) {
+    res.statusCode = 401;
+    res.redirect('/login')
+  }
+  if (req.cookies.user_id !== urlDatabase[req.params.shortURL].userID) {
+    res.statusCode = 403;
+    res.redirect('/urls')
+  }
+  if (req.cookies.user_id === urlDatabase[req.params.shortURL].userID) {
+    urlDatabase[req.params.shortURL].longURL = req.body.longURL;
+  }
   res.redirect("/urls");
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect("/urls");
+  if (!req.cookies.user_id) {
+    res.statusCode = 401;
+    res.redirect('/login')
+  }
+  if (req.cookies.user_id !== urlDatabase[req.params.shortURL].userID) {
+    res.statusCode = 403;
+    res.redirect('/urls')
+  }
+  if (req.cookies.user_id === urlDatabase[req.params.shortURL].userID) {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect("/urls");
+  }
 });
 
 

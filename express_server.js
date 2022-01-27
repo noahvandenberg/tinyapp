@@ -80,6 +80,10 @@ app.get("/u/:shortURL", (req, res) => {
 
 // Register / Login / Logout
 app.post("/register", (req, res) => {
+  if (req.body.email === '' || req.body.email === '') {res.statusCode = 400; res.redirect('/register')}
+  for (const user in users) {
+    if (req.body.email === users[user].email) {res.statusCode = 400; res.redirect('/register')}
+  }
   const newUserId = generateRandomString() + generateRandomString()
   users[newUserId] = {
     id: newUserId,
@@ -87,7 +91,6 @@ app.post("/register", (req, res) => {
     password: req.body.password,
   };
   res.cookie('user_id', newUserId)
-  console.log(users)
   res.redirect('/urls')
 });
 

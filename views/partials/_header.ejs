@@ -15,8 +15,8 @@
           </li>
         </ul>
       </div>
-      <% if(username){ %>
-        <h3 class="text mx-4">Welcome: <%= username %></h3>
+      <% if(user_id){ %>
+        <h3 class="text mx-4">Welcome: <%= users[user_id].email %></h3>
         <form class="d-flex" action="/logout" method="POST">
           <button class="btn btn-outline-dark" type="submit">Logout</button>
         </form>

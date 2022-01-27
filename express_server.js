@@ -17,6 +17,14 @@ const urlDatabase = {
   "9sm5xK": "www.google.com"
 };
 
+const users = {
+  "admin" : {
+    id: "admin",
+    email: "gunna@pushingp.com",
+    password: "pushingp123",
+  },
+};
+
 app.set('view engine', 'ejs');
 
 
@@ -28,9 +36,59 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies.username
+    users: users,
+    user_id: req.cookies.user_id
   }
   res.render('urls_index',templateVars)
+});
+
+// GET registration page
+app.get("/register", (req, res) => {
+  const templateVars = {
+    users: users,
+    user_id: req.cookies.user_id
+  };
+  res.render("urls_register", templateVars);
+});
+
+// GET new url page
+app.get("/urls/new", (req, res) => {
+  const templateVars = {
+    users: users,
+    user_id: req.cookies.user_id
+  }
+  res.render("urls_new", templateVars);
+});
+
+// GET Specific URL Page
+app.get("/urls/:shortURL", (req, res) => {
+  const templateVars = { 
+    shortURL: req.params.shortURL, 
+    longURL: urlDatabase[req.params.shortURL],
+    users: users,
+    user_id: req.cookies.user_id
+  };
+  res.render('urls_show', templateVars)
+});
+
+// GET sends a shortURL to a longURL
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL]
+  res.redirect(longURL);
+});
+
+
+// Register / Login / Logout
+app.post("/register", (req, res) => {
+  const newUserId = generateRandomString() + generateRandomString()
+  users[newUserId] = {
+    id: newUserId,
+    email: req.body.email,
+    password: req.body.password,
+  };
+  res.cookie('user_id', newUserId)
+  console.log(users)
+  res.redirect('/urls')
 });
 
 app.post("/login", (req, res) => {
@@ -43,42 +101,8 @@ app.post("/logout", (req, res) => {
   res.redirect('/urls')
 });
 
-// GET registration page
-app.get("/register", (req, res) => {
-  res.render("urls_registration");
-});
 
-// GET new url page
-app.get("/urls/new", (req, res) => {
-  const templateVars = {
-    username: req.cookies.username
-  }
-  res.render("urls_new", templateVars);
-});
-
-// GET Specific URL Page
-app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { 
-    shortURL: req.params.shortURL, 
-    longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies.username 
-  };
-  res.render('urls_show', templateVars)
-});
-
-// POST update a url
-app.post("/urls/:shortURL/update", (req, res) => {
-  urlDatabase[req.params.shortURL] = req.body.longURL
-  res.redirect("/urls")
-});
-
-// POST delete a url
-app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL]
-  res.redirect("/urls")
-});
-
-// POST Create a new url
+// Create / Update / Delete shortUrls
 app.post("/urls", (req, res) => {
   const newLinkID = generateRandomString();
   // Poor handling if the input has a http:// already attached
@@ -86,10 +110,14 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${newLinkID}`);
 });
 
-// GET sends a shortURL to a longURL
-app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL]
-  res.redirect(longURL);
+app.post("/urls/:shortURL/update", (req, res) => {
+  urlDatabase[req.params.shortURL] = req.body.longURL
+  res.redirect("/urls")
+});
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  delete urlDatabase[req.params.shortURL]
+  res.redirect("/urls")
 });
 
 

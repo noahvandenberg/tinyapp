@@ -56,7 +56,14 @@ app.set('view engine', 'ejs');
 
 // Get Pages
 app.get("/", (req, res) => {
-  res.redirect("/urls");
+  console.log(req.session)
+  if (req.session.user_id) {
+    res.redirect("/urls");
+  }
+  if (!req.session.user_id) {
+    console.log(false)
+    res.redirect("/login");
+  }
 });
 
 //Homepage

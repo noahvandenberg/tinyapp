@@ -163,15 +163,17 @@ app.post("/register", (req, res) => {
 
 
 app.post("/login", (req, res) => {
-  const userEmail = userHelpers.getUserByEmail(req.session.user_id,users)
-  console.log(userEmail)
-  console.log(req.body)
-  for (const user in users) {
-    if (users[user].email === req.body.email && bcrypt.compareSync(req.body.password, users[user].password) ) {
-      req.session.user_id = users[user].id
-    }
+
+  const userID = userHelpers.getUserByEmail(req.body.email,users)
+  const userEmail = users[userID].email
+  const userPassword = users[userID].password
+
+  if ( req.body.email === userEmail && bcrypt.compareSync(req.body.password, userPassword) ) {
+    req.session.user_id = users[userID].id
   }
+
   res.redirect('/urls');
+  
 });
 
 

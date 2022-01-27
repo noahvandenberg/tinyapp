@@ -40,6 +40,9 @@ const users = {
   },
 };
 
+
+
+
 const createAdminUser = () => {
   users.admin = {
     id: "admin",
@@ -52,34 +55,38 @@ createAdminUser();
 console.log(users)
 
 
+
 app.set('view engine', 'ejs');
 
 // Get Pages
 app.get("/", (req, res) => {
-  console.log(req.session)
+
   if (req.session.user_id) {
     res.redirect("/urls");
   }
+
   if (!req.session.user_id) {
     console.log(false)
     res.redirect("/login");
   }
+
 });
+
+
 
 //Homepage
 app.get("/urls", (req, res) => {
-  const usersUrls = {}
-  for (const url in urlDatabase) {
-    if (urlDatabase[url].userID === req.session.user_id) {
-      usersUrls[url] = urlDatabase[url]
-    }
-  }
+
+  const usersUrls = userHelpers.getUrlsByUser(req.session.user_id, urlDatabase)
+
   const templateVars = {
     urls: usersUrls,
     users: users,
     user_id: req.session.user_id
   };
+
   res.render('urls_index',templateVars);
+
 });
 
 //Registar page

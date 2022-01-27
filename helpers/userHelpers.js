@@ -6,6 +6,19 @@ const getUserByEmail = (email,database) => {
   }
 }
 
+
+const getUrlsByUser = (user,database) => {
+  const usersUrls = {}
+  for (const url in database) {
+    if (database[url].userID === user) {
+      usersUrls[url] = database[url]
+    }
+  }
+  return usersUrls
+}
+
+
 module.exports = {
   getUserByEmail,
+  getUrlsByUser,
 }

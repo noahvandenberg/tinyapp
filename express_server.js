@@ -51,6 +51,15 @@ app.get("/register", (req, res) => {
   res.render("urls_register", templateVars);
 });
 
+// GET registration page
+app.get("/login", (req, res) => {
+  const templateVars = {
+    users: users,
+    user_id: req.cookies.user_id
+  };
+  res.render("urls_login", templateVars);
+});
+
 // GET new url page
 app.get("/urls/new", (req, res) => {
   const templateVars = {
@@ -95,12 +104,16 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username);
+  for (const user in users) {
+    if (users[user].email === req.body.email && users[user].password === req.body.password) {
+      res.cookie('user_id', users[user].id)
+    }
+  }
   res.redirect('/urls')
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect('/urls')
 });
 

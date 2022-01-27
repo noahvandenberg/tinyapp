@@ -41,8 +41,14 @@ app.get("/", (req, res) => {
 
 //Homepage
 app.get("/urls", (req, res) => {
+  const usersUrls = {}
+  for (const url in urlDatabase) {
+    if (urlDatabase[url].userID === req.cookies.user_id) {
+      usersUrls[url] = urlDatabase[url]
+    }
+  }
   const templateVars = {
-    urls: urlDatabase,
+    urls: usersUrls,
     users: users,
     user_id: req.cookies.user_id
   };

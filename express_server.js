@@ -132,10 +132,16 @@ app.post("/logout", (req, res) => {
 
 // Create / Update / Delete shortUrls
 app.post("/urls", (req, res) => {
-  const newLinkID = generateRandomString();
-  // Poor handling if the input has a http:// already attached
-  urlDatabase[newLinkID] = `http://${req.body.longURL}`;
-  res.redirect(`/urls/${newLinkID}`);
+  if (!req.cookies.user_id) {
+    res.statusCode = 400;
+    res.end()
+  }
+  if (req.cookies.user_id) {
+    const newLinkID = generateRandomString();
+    // Poor handling if the input has a http:// already attached
+    urlDatabase[newLinkID] = `http://${req.body.longURL}`;
+    res.redirect(`/urls/${newLinkID}`);
+  }
 });
 
 app.post("/urls/:shortURL/update", (req, res) => {

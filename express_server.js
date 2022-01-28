@@ -242,5 +242,5 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 // Start the A🅿️🅿️
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Tiny A🅿️ 🅿️ listening on port ${PORT}!`);
 });

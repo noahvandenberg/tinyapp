@@ -211,22 +211,24 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-
-  if (req.session.user_id) {
-    res.redirect('/urls')
-  }
-
-  if (!req.session.user_id) {
     const userID = userHelpers.getUserByEmail(req.body.email,users)
     const userEmail = users[userID].email
     const userPassword = users[userID].password
-  
+
+    if (!userID) {
+      // SHOULD REDIRECT TO USER NOT FOUND / BAD PASSWORD IN ERROR PAGE
+      res.redirect('/login');
+    }
+
+    if (!bcrypt.compareSync(req.body.password, userPassword)) {
+      // SHOULD REDIRECT TO BAD PASSWORD IN ERROR PAGE
+      res.redirect('/login');
+    }
+
     if ( req.body.email === userEmail && bcrypt.compareSync(req.body.password, userPassword) ) {
       req.session.user_id = userID
+      res.redirect('/urls');
     }
-  
-    res.redirect('/urls');
-  }
 });
 
 app.post("/logout", (req, res) => {

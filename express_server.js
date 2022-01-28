@@ -46,19 +46,19 @@ users.admin = userHelpers.createAdminUser(bcrypt);
 
 //  **************************** GET ****************************
 app.get("/", (req, res) => {
-  if (req.session.user_id) {
+  if (users.hasOwnProperty(req.session.user_id)) {
     res.redirect("/urls");
   }
-  if (!req.session.user_id) {
+  if (!users.hasOwnProperty(req.session.user_id)) {
     res.redirect("/login");
   }
 });
 
 app.get("/register", (req, res) => {
-  if (req.session.user_id) {
+  if (users.hasOwnProperty(req.session.user_id)) {
     res.redirect('/urls');
   }
-  if (!req.session.user_id) {
+  if (!users.hasOwnProperty(req.session.user_id)) {
     const templateVars = {
       users: users,
       user_id: req.session.user_id
@@ -68,10 +68,10 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  if (req.session.user_id) {
+  if (users.hasOwnProperty(req.session.user_id)) {
     res.redirect('/urls');
   }
-  if (!req.session.user_id) {
+  if (!users.hasOwnProperty(req.session.user_id)) {
     const templateVars = {
       users: users,
       user_id: req.session.user_id
@@ -81,10 +81,10 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  if (!req.session.user_id) {
+  if (!users.hasOwnProperty(req.session.user_id)) {
     res.redirect('/e/400');
   }
-  if (req.session.user_id) {
+  if (users.hasOwnProperty(req.session.user_id)) {
     const usersUrls = userHelpers.getUrlsByUser(req.session.user_id, urlDatabase);
     const templateVars = {
       urls: usersUrls,
@@ -96,10 +96,10 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  if (!req.session.user_id) {
+  if (!users.hasOwnProperty(req.session.user_id)) {
     res.redirect('login');
   }
-  if (req.session.user_id) {
+  if (users.hasOwnProperty(req.session.user_id)) {
     const templateVars = {
       users: users,
       user_id: req.session.user_id
@@ -157,10 +157,10 @@ app.post("/register", (req, res) => {
     res.redirect('/e/400')
   }
   const userID = userHelpers.getUserByEmail(req.body.email,users);
-  if (userID) {
+  if (users.hasOwnProperty(userID)) {
     res.redirect('/e/400')
   }
-  if (!userID) {
+  if (!users.hasOwnProperty(userID)) {
     const newUserId = generateRandomString() + generateRandomString();
     users[newUserId] = {
       id: newUserId,
@@ -178,7 +178,7 @@ app.post("/login", (req, res) => {
     res.redirect('/e/400')
   }
   const userID = userHelpers.getUserByEmail(req.body.email,users);
-  if (!userID) {
+  if (!users.hasOwnProperty(userID)) {
     res.redirect('/e/401')
   }
   const userEmail = users[userID].email;
@@ -203,9 +203,10 @@ app.post("/urls", (req, res) => {
   }
   if (req.session.user_id) {
     const newLinkID = generateRandomString();
+    const parsedURL = userHelpers.parseURL(req.body.longURL)
     // Poor handling if the input has a http:// already attached
     urlDatabase[newLinkID] = {
-      longURL: `http://${req.body.longURL}`,
+      longURL: parsedURL,
       userID: req.session.user_id
     };
     res.redirect(`/urls/${newLinkID}`);
@@ -213,7 +214,7 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:shortURL", (req, res) => {
-  if (!req.session.user_id) {
+  if (!users.hasOwnProperty(req.session.user_id)) {
     res.redirect('/e/401')
   }
   if (req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
@@ -226,7 +227,7 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  if (!req.session.user_id) {
+  if (!users.hasOwnProperty(req.session.user_id)) {
     res.redirect('/e/401')
   }
   if (req.session.user_id !== urlDatabase[req.params.shortURL].userID) {

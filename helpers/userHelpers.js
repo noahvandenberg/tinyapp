@@ -39,10 +39,25 @@ const generateRandomString = () => {
   return Math.random().toString(36).slice(7);
 };
 
+const parseURL = (input) => {
+  const httpCheck = input.split('').splice(0,7).join('')
+  if (httpCheck === 'http://') {
+    return input
+  }
+  const wwwCheck = input.split('').splice(0,4).join('')
+  if (wwwCheck === 'www.') {
+    return `http://${input}`
+  }
+  if (input) {
+    return `http://www.${input}`
+  }
+}
+
 module.exports = {
   getUserByEmail,
   getUrlsByUser,
   createAdminUser,
   errorMessageGenerator,
-  generateRandomString
+  generateRandomString,
+  parseURL
 }

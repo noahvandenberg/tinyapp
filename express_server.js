@@ -21,6 +21,7 @@ app.use(cookie({
 const bcrypt = require('bcryptjs');
 const userHelpers = require('./helpers/userHelpers');
 const generateRandomString = userHelpers.generateRandomString
+const validUser = userHelpers.validUser
 
 
 //  ******************* FAUX DATABASES *******************
@@ -46,19 +47,19 @@ users.admin = userHelpers.createAdminUser(bcrypt);
 
 //  **************************** GET ****************************
 app.get("/", (req, res) => {
-  if (users.hasOwnProperty(req.session.user_id)) {
+  if (validUser(req.session.user_id,users)) {
     res.redirect("/urls");
   }
-  if (!users.hasOwnProperty(req.session.user_id)) {
+  if (!validUser(req.session.user_id,users)) {
     res.redirect("/login");
   }
 });
 
 app.get("/register", (req, res) => {
-  if (users.hasOwnProperty(req.session.user_id)) {
+  if (validUser(req.session.user_id,users)) {
     res.redirect('/urls');
   }
-  if (!users.hasOwnProperty(req.session.user_id)) {
+  if (!validUser(req.session.user_id,users)) {
     const templateVars = {
       users: users,
       user_id: req.session.user_id
@@ -68,10 +69,10 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  if (users.hasOwnProperty(req.session.user_id)) {
+  if (validUser(req.session.user_id,users)) {
     res.redirect('/urls');
   }
-  if (!users.hasOwnProperty(req.session.user_id)) {
+  if (!validUser(req.session.user_id,users)) {
     const templateVars = {
       users: users,
       user_id: req.session.user_id
@@ -81,10 +82,10 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  if (!users.hasOwnProperty(req.session.user_id)) {
+  if (!validUser(req.session.user_id,users)) {
     res.redirect('/login');
   }
-  if (users.hasOwnProperty(req.session.user_id)) {
+  if (validUser(req.session.user_id,users)) {
     const usersUrls = userHelpers.getUrlsByUser(req.session.user_id, urlDatabase);
     const templateVars = {
       urls: usersUrls,
@@ -96,10 +97,10 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  if (!users.hasOwnProperty(req.session.user_id)) {
+  if (!validUser(req.session.user_id,users)) {
     res.redirect('login');
   }
-  if (users.hasOwnProperty(req.session.user_id)) {
+  if (validUser(req.session.user_id,users)) {
     const templateVars = {
       users: users,
       user_id: req.session.user_id
@@ -214,7 +215,7 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:shortURL", (req, res) => {
-  if (!users.hasOwnProperty(req.session.user_id)) {
+  if (!validUser(req.session.user_id,users)) {
     res.redirect('/e/401')
   }
   if (req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
@@ -227,7 +228,7 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  if (!users.hasOwnProperty(req.session.user_id)) {
+  if (!validUser(req.session.user_id,users)) {
     res.redirect('/e/401')
   }
   if (req.session.user_id !== urlDatabase[req.params.shortURL].userID) {

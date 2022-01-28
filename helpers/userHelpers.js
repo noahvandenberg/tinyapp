@@ -53,11 +53,20 @@ const parseURL = (input) => {
   }
 }
 
+const validUser = (user,database) =>{
+  return database.hasOwnProperty(user)
+}
+
+const validUserIsAllowed = (user,userDatabase,urlID,urlDatabase) => {
+}
+
 module.exports = {
   getUserByEmail,
   getUrlsByUser,
   createAdminUser,
   errorMessageGenerator,
   generateRandomString,
-  parseURL
+  parseURL,
+  validUser,
+  validUserIsAllowed,
 }

@@ -164,6 +164,15 @@ app.get("/u/:shortURL", (req, res) => {
     res.redirect(longURL);
   }
 });
+///////////////////////////////////////////////////////////////////////////////////////////////////
+app.get("/e/:errorCode", (req, res) => {
+  const templateVars = {
+    users: users,
+    user_id: req.session.user_id,
+    errorCode: req.params.errorCode
+  };
+  res.render('error', templateVars)
+});
 
 app.post("/register", (req, res) => {
 
@@ -194,13 +203,13 @@ app.post("/register", (req, res) => {
   }
 
 });
-
+////////////////////////////////////////////////////////////////////////////////////////////////
 app.post("/login", (req, res) => {
 
   if (!req.body.email || !req.body.password) {
     // CANNOT ENTER NO INFO BAD REQUEST
-    res.statusCode = 400;
-    res.redirect('/register');
+    // res.statusCode = 400;
+    res.redirect('/e/400');
   }
 
   const userID = userHelpers.getUserByEmail(req.body.email,users);

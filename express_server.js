@@ -194,21 +194,28 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  const userID = userHelpers.getUserByEmail(req.body.email,users)
-  const userEmail = users[userHelpers.getUserByEmail(req.body.email,users)].email
-  const userPassword = users[userHelpers.getUserByEmail(req.body.email,users)].password
 
-  if (!req.body.email) {
-    // SHOULD REDIRECT TO USER NOT FOUND / BAD PASSWORD IN ERROR PAGE
+  if (!req.body.email || !req.body.password) {
+    // CANNOT ENTER NO INFO BAD REQUEST
     res.redirect('/login');
   }
+
+  const userID = userHelpers.getUserByEmail(req.body.email,users)
+
+  if (!userID) {
+    // USER DOES NOT EXIST
+    res.redirect('/login');
+  }
+
+  const userEmail = users[userID].email
+  const userPassword = users[userID].password 
 
   if (!bcrypt.compareSync(req.body.password, userPassword)) {
     // SHOULD REDIRECT TO BAD PASSWORD IN ERROR PAGE
     res.redirect('/login');
   }
 
-  if ( req.body.email === userEmail && bcrypt.compareSync(req.body.password, userPassword) ) {
+  if (bcrypt.compareSync(req.body.password, userPassword) ) {
     req.session.user_id = userID
     res.redirect('/urls');
   }

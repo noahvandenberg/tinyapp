@@ -151,9 +151,10 @@ app.get("/urls/:shortURL", (req, res) => {
   }
 
 });
-
+ 
 app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase[req.params.shortURL]) {
+    // SHOULD REDIRECT TO PAGE NOT FOUND ERROR PAGE
     res.statusCode = 400;
     res.redirect('/urls')
   }
@@ -165,10 +166,6 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 
-
-
-
-// Register / Login / Logout
 app.post("/register", (req, res) => {
 
   // if email doesnt exist
@@ -199,11 +196,6 @@ app.post("/register", (req, res) => {
 
 });
 
-
-
-
-
-
 app.post("/login", (req, res) => {
 
   const userID = userHelpers.getUserByEmail(req.body.email,users)
@@ -218,13 +210,6 @@ app.post("/login", (req, res) => {
 
 });
 
-
-
-
-
-
-
-
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect('/urls');
@@ -237,6 +222,7 @@ app.post("/logout", (req, res) => {
 // Create / Update / Delete shortUrls
 app.post("/urls", (req, res) => {
   if (!req.session.user_id) {
+    // SHOULD REDIRECT TO NOT LOGGED / NOT AUTHED IN ERROR PAGE
     res.statusCode = 400;
     res.end()
   }

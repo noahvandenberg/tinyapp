@@ -168,32 +168,34 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.post("/register", (req, res) => {
 
-  // if email doesnt exist
-  if (req.body.email === '' || req.body.email === '') {
-    res.statusCode = 400;
-    res.redirect('/register');
+  if (req.session.user_id) {
+    res.redirect('/urls')
   }
 
-  const userID = userHelpers.getUserByEmail(req.body.email,users)
-  const userEmail = users[userID].email
+  if (!req.session.user_id) {
+    const userID = userHelpers.getUserByEmail(req.body.email,users)
+    const userEmail = users[userID].email
 
-  // if user already exists
-  if (req.body.email === userEmail) {
-    res.statusCode = 400;
-    res.redirect('/login');
+    // Validate User inputs
+    if (req.body.email === '' || req.body.email === '') {
+      res.statusCode = 400;
+      res.redirect('/register');
+    }
+    if (req.body.email === userEmail) {
+      res.statusCode = 400;
+      res.redirect('/login');
+    }
+
+    const newUserId = generateRandomString() + generateRandomString();
+    users[newUserId] = {
+      id: newUserId,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, 10)
+    };
+
+    req.session.user_id = newUserId
+    res.redirect('/urls');
   }
-
-  const newUserId = generateRandomString() + generateRandomString();
-
-  users[newUserId] = {
-    id: newUserId,
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 10)
-  };
-
-  req.session.user_id = newUserId
-  res.redirect('/urls');
-
 });
 
 app.post("/login", (req, res) => {
@@ -208,7 +210,7 @@ app.post("/login", (req, res) => {
     const userPassword = users[userID].password
   
     if ( req.body.email === userEmail && bcrypt.compareSync(req.body.password, userPassword) ) {
-      req.session.user_id = users[userID].id
+      req.session.user_id = userID
     }
   
     res.redirect('/urls');

@@ -35,9 +35,14 @@ const errorMessageGenerator = (errorCode) => {
   return errorCodes[errorCode]
 }
 
+const generateRandomString = () => {
+  return Math.random().toString(36).slice(7);
+};
+
 module.exports = {
   getUserByEmail,
   getUrlsByUser,
   createAdminUser,
-  errorMessageGenerator
+  errorMessageGenerator,
+  generateRandomString
 }

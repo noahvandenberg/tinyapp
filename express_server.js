@@ -228,9 +228,6 @@ app.post("/logout", (req, res) => {
 });
 
 
-
-
-
 // Create / Update / Delete shortUrls
 app.post("/urls", (req, res) => {
   if (!req.session.user_id) {

@@ -260,10 +260,12 @@ app.post("/urls/:shortURL", (req, res) => {
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   if (!req.session.user_id) {
+    // SHOULD REDIRECT TO NOT LOGGED IN IN ERROR PAGE
     res.statusCode = 401;
     res.redirect('/login')
   }
   if (req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
+    // SHOULD REDIRECT TO NOT AUTHED IN ERROR PAGE
     res.statusCode = 403;
     res.redirect('/urls')
   }

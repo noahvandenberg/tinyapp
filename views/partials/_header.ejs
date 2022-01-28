@@ -18,14 +18,14 @@
       <% if(users[user_id]){ %>
         <h3 class="text mx-2 success">Welcome: <%= users[user_id].email %></h3>
         <form class="d-flex mx-2" action="/logout" method="POST">
-          <button class="btn btn-outline-dark" type="submit">Logout</button>
+          <button class="btn btn-outline-light" type="submit">Logout</button>
         </form>
       <% } else {%>
         <form class="d-flex mx-2" action="/login" method="GET">
-          <button class="btn btn-outline-dark" type="submit">Login</button>
+          <button class="btn btn-outline-light" type="submit">Login</button>
         </form>
         <form class="d-flex mx-2"  action="/register" method="GET">
-          <button class="btn btn-outline-dark" type="submit">Register</button>
+          <button class="btn btn-outline-light" type="submit">Register</button>
         </form>
       <% } %>
     </div>

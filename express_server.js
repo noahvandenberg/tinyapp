@@ -20,7 +20,7 @@ app.use(cookie({
 //  ******************* HELPERS *******************
 const bcrypt = require('bcryptjs');
 const userHelpers = require('./helpers/userHelpers');
-const generateRandomString = userHelpers.generateRandomString()
+const generateRandomString = userHelpers.generateRandomString
 
 
 //  ******************* FAUX DATABASES *******************

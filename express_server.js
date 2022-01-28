@@ -80,11 +80,17 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const templateVars = {
-    users: users,
-    user_id: req.session.user_id
-  };
-  res.render("urls_login", templateVars);
+  if (req.session.user_id) {
+    res.redirect('/urls')
+  }
+
+  if (!req.session.user_id) {
+    const templateVars = {
+      users: users,
+      user_id: req.session.user_id
+    };
+    res.render("urls_login", templateVars);
+  }
 });
 
 app.get("/urls", (req, res) => {

@@ -11,6 +11,9 @@ app.use(cookie({
   keys: ['NoahLikesPie']
 }));
 
+const logger = require('morgan')
+app.use(logger("dev"));
+
 const bcrypt = require('bcryptjs')
 
 const generateRandomString = () => {
@@ -39,19 +42,7 @@ const users = {
     password: "gunna",
   },
 };
-
-
-
-
-const createAdminUser = () => {
-  users.admin = {
-    id: "admin",
-    email: "noah@v.com",
-    password: bcrypt.hashSync("a", 10)
-  }
-};
-
-createAdminUser();
+users.admin = userHelpers.createAdminUser(bcrypt);
 console.log(users)
 
 
@@ -203,24 +194,24 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-    const userID = userHelpers.getUserByEmail(req.body.email,users)
-    const userEmail = users[userID].email
-    const userPassword = users[userID].password
+  const userID = userHelpers.getUserByEmail(req.body.email,users)
+  const userEmail = users[userHelpers.getUserByEmail(req.body.email,users)].email
+  const userPassword = users[userHelpers.getUserByEmail(req.body.email,users)].password
 
-    if (!userID) {
-      // SHOULD REDIRECT TO USER NOT FOUND / BAD PASSWORD IN ERROR PAGE
-      res.redirect('/login');
-    }
+  if (!req.body.email) {
+    // SHOULD REDIRECT TO USER NOT FOUND / BAD PASSWORD IN ERROR PAGE
+    res.redirect('/login');
+  }
 
-    if (!bcrypt.compareSync(req.body.password, userPassword)) {
-      // SHOULD REDIRECT TO BAD PASSWORD IN ERROR PAGE
-      res.redirect('/login');
-    }
+  if (!bcrypt.compareSync(req.body.password, userPassword)) {
+    // SHOULD REDIRECT TO BAD PASSWORD IN ERROR PAGE
+    res.redirect('/login');
+  }
 
-    if ( req.body.email === userEmail && bcrypt.compareSync(req.body.password, userPassword) ) {
-      req.session.user_id = userID
-      res.redirect('/urls');
-    }
+  if ( req.body.email === userEmail && bcrypt.compareSync(req.body.password, userPassword) ) {
+    req.session.user_id = userID
+    res.redirect('/urls');
+  }
 });
 
 app.post("/logout", (req, res) => {

@@ -6,7 +6,6 @@ const getUserByEmail = (email,database) => {
   }
 }
 
-
 const getUrlsByUser = (user,database) => {
   const usersUrls = {}
   for (const url in database) {
@@ -17,8 +16,18 @@ const getUrlsByUser = (user,database) => {
   return usersUrls
 }
 
+const createAdminUser = (bcrypt) => {
+  const admin = {
+    id: "admin",
+    email: "noah@v.com",
+    password: bcrypt.hashSync("a", 10)
+  }
+  return admin
+};
+
 
 module.exports = {
   getUserByEmail,
   getUrlsByUser,
+  createAdminUser,
 }

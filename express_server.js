@@ -237,19 +237,25 @@ app.post("/urls", (req, res) => {
   }
 });
 
-app.post("/urls/:shortURL/update", (req, res) => {
+app.post("/urls/:shortURL", (req, res) => {
+
   if (!req.session.user_id) {
+    // SHOULD REDIRECT TO NOT LOGGED IN IN ERROR PAGE
     res.statusCode = 401;
     res.redirect('/login')
   }
+  
   if (req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
+    // SHOULD REDIRECT TO NOT AUTHED IN ERROR PAGE
     res.statusCode = 403;
     res.redirect('/urls')
   }
+
   if (req.session.user_id === urlDatabase[req.params.shortURL].userID) {
     urlDatabase[req.params.shortURL].longURL = req.body.longURL;
+    res.redirect("/urls");
   }
-  res.redirect("/urls");
+
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {

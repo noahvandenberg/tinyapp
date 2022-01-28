@@ -1,26 +1,31 @@
+//  ******************* EXPRESS SERVER *******************
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 
-const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}));
 
+//  ******************* MIDDLEWARE *******************
+const bodyParser = require("body-parser");
 const cookie = require('cookie-session');
+const logger = require('morgan');
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(logger("dev"));
 app.use(cookie({
   name: 'session',
-  keys: ['NoahLikesPie']
+  keys: ['hdcv6pfCyQNRn6nqmvvKMaq2kmkEMLRqvyLC5tERXJkunF8HT7kJearR4UT8XumXDcvad']
 }));
 
-const logger = require('morgan');
-app.use(logger("dev"));
 
+//  ******************* HELPERS *******************
 const bcrypt = require('bcryptjs');
-
-
-
 const userHelpers = require('./helpers/userHelpers');
-app.set('view engine', 'ejs');
+const generateRandomString = () => {
+  return Math.random().toString(36).slice(7);
+};
 
+
+//  ******************* FAUX DATABASES *******************
 const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
@@ -31,7 +36,6 @@ const urlDatabase = {
     userID: "admin"
   }
 };
-
 const users = {
   "demo" : {
     id: "demo",
@@ -40,14 +44,6 @@ const users = {
   },
 };
 users.admin = userHelpers.createAdminUser(bcrypt);
-
-
-const generateRandomString = () => {
-  return Math.random().toString(36).slice(7);
-};
-
-
-
 
 
 //  **************************** GET ****************************
@@ -242,6 +238,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     res.redirect("/urls");
   }
 });
+
 
 // Start the A🅿️🅿️
 app.listen(PORT, () => {

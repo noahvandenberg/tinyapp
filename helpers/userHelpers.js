@@ -25,8 +25,19 @@ const createAdminUser = (bcrypt) => {
   return admin
 };
 
+const errorMessageGenerator = (errorCode) => {
+  const errorCodes = {
+    400: 'Bad Request',
+    401: 'Unauthorized',
+    403: 'Forbidden',
+    404: 'Not Found'
+  }
+  return errorCodes[errorCode]
+}
+
 module.exports = {
   getUserByEmail,
   getUrlsByUser,
   createAdminUser,
+  errorMessageGenerator
 }

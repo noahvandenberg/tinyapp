@@ -146,7 +146,8 @@ app.get("/e/:errorCode", (req, res) => {
   const templateVars = {
     users: users,
     user_id: req.session.user_id,
-    errorCode: req.params.errorCode
+    errorCode: req.params.errorCode,
+    errorMessage: userHelpers.errorMessageGenerator(req.params.errorCode)
   };
   res.render('error', templateVars)
 });
@@ -159,7 +160,7 @@ app.post("/register", (req, res) => {
   }
   const userID = userHelpers.getUserByEmail(req.body.email,users);
   if (userID) {
-    return res.statusCode(400)
+    res.redirect('/e/400')
   }
   if (!userID) {
     const newUserId = generateRandomString() + generateRandomString();
@@ -238,7 +239,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     res.redirect("/urls");
   }
 });
-
 
 // Start the A🅿️🅿️
 app.listen(PORT, () => {

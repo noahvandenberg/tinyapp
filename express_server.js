@@ -136,6 +136,8 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
 
+  const shortURL = req.params.shortURL
+
   if (!req.session.user_id) {
       // SHOULD REDIRECT TO USER NOT LOGGED IN ERROR PAGE
       res.redirect('/login')
@@ -151,7 +153,7 @@ app.get("/urls/:shortURL", (req, res) => {
     res.redirect('/urls')
   }
 
-  if (urlDatabase[shortURL].userID !== req.session.user_id && req.session.user_id) {
+  if (urlDatabase[shortURL].userID === req.session.user_id && req.session.user_id) {
     const templateVars = {
       shortURL: req.params.shortURL,
       longURL: urlDatabase[req.params.shortURL].longURL,
@@ -161,7 +163,6 @@ app.get("/urls/:shortURL", (req, res) => {
   
     res.render('urls_show', templateVars);
   }
-
 });
  
 app.get("/u/:shortURL", (req, res) => {
@@ -226,7 +227,6 @@ app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect('/urls');
 });
-
 
 // Create / Update / Delete shortUrls
 app.post("/urls", (req, res) => {

@@ -169,35 +169,41 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const userID = userHelpers.getUserByEmail(req.body.email,users)
-  const userEmail = users[userID].email
 
-  // Validate User inputs
-  if (req.body.email === '' || req.body.email === '') {
+  if (!req.body.email || !req.body.password) {
+    // CANNOT ENTER NO INFO BAD REQUEST
     res.statusCode = 400;
     res.redirect('/register');
   }
-  if (req.body.email === userEmail) {
+
+  const userID = userHelpers.getUserByEmail(req.body.email,users)
+
+  if (userID) {
+    // USER ALREADY EXITS SEND ERROR
     res.statusCode = 400;
     res.redirect('/login');
   }
 
-  const newUserId = generateRandomString() + generateRandomString();
-  users[newUserId] = {
-    id: newUserId,
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 10)
-  };
+  if (!userID) {
+    const newUserId = generateRandomString() + generateRandomString();
+    users[newUserId] = {
+      id: newUserId,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, 10)
+    };
+  
+    req.session.user_id = newUserId
+    res.redirect('/urls');
+  }
 
-  req.session.user_id = newUserId
-  res.redirect('/urls');
 });
 
 app.post("/login", (req, res) => {
 
   if (!req.body.email || !req.body.password) {
     // CANNOT ENTER NO INFO BAD REQUEST
-    res.redirect('/login');
+    res.statusCode = 400;
+    res.redirect('/register');
   }
 
   const userID = userHelpers.getUserByEmail(req.body.email,users)

@@ -198,16 +198,21 @@ app.post("/register", (req, res) => {
 
 app.post("/login", (req, res) => {
 
-  const userID = userHelpers.getUserByEmail(req.body.email,users)
-  const userEmail = users[userID].email
-  const userPassword = users[userID].password
-
-  if ( req.body.email === userEmail && bcrypt.compareSync(req.body.password, userPassword) ) {
-    req.session.user_id = users[userID].id
+  if (req.session.user_id) {
+    res.redirect('/urls')
   }
 
-  res.redirect('/urls');
-
+  if (!req.session.user_id) {
+    const userID = userHelpers.getUserByEmail(req.body.email,users)
+    const userEmail = users[userID].email
+    const userPassword = users[userID].password
+  
+    if ( req.body.email === userEmail && bcrypt.compareSync(req.body.password, userPassword) ) {
+      req.session.user_id = users[userID].id
+    }
+  
+    res.redirect('/urls');
+  }
 });
 
 app.post("/logout", (req, res) => {

@@ -16,11 +16,10 @@ app.use(logger("dev"));
 
 const bcrypt = require('bcryptjs');
 
-const generateRandomString = () => {
-  return Math.random().toString(36).slice(7);
-};
+
 
 const userHelpers = require('./helpers/userHelpers');
+app.set('view engine', 'ejs');
 
 const urlDatabase = {
   b6UTxQ: {
@@ -42,8 +41,10 @@ const users = {
 };
 users.admin = userHelpers.createAdminUser(bcrypt);
 
-app.set('view engine', 'ejs');
 
+const generateRandomString = () => {
+  return Math.random().toString(36).slice(7);
+};
 
 
 
@@ -102,7 +103,7 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   if (!req.session.user_id) {
-    res.redirect('/e/400');
+    res.redirect('login');
   }
   if (req.session.user_id) {
     const templateVars = {
@@ -158,7 +159,7 @@ app.get("/e/:errorCode", (req, res) => {
 //  **************************** POST ****************************
 app.post("/register", (req, res) => {
   if (!req.body.email || !req.body.password) {
-    return res.statusCode(400)
+    res.redirect('/e/400')
   }
   const userID = userHelpers.getUserByEmail(req.body.email,users);
   if (userID) {
@@ -179,16 +180,16 @@ app.post("/register", (req, res) => {
 
 app.post("/login", (req, res) => {
   if (!req.body.email || !req.body.password) {
-    return res.statusCode(400)
+    res.redirect('/e/400')
   }
   const userID = userHelpers.getUserByEmail(req.body.email,users);
   if (!userID) {
-    return res.statusCode(401)
+    res.redirect('/e/401')
   }
   const userEmail = users[userID].email;
   const userPassword = users[userID].password;
   if (!bcrypt.compareSync(req.body.password, userPassword)) {
-    return res.statusCode(401)
+    res.redirect('/e/401')
   }
   if (bcrypt.compareSync(req.body.password, userPassword)) {
     req.session.user_id = userID;
@@ -203,7 +204,7 @@ app.post("/logout", (req, res) => {
 
 app.post("/urls", (req, res) => {
   if (!req.session.user_id) {
-    return res.statusCode(400)
+    res.redirect('/e/400')
   }
   if (req.session.user_id) {
     const newLinkID = generateRandomString();
@@ -218,10 +219,10 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:shortURL", (req, res) => {
   if (!req.session.user_id) {
-    return res.statusCode(401)
+    res.redirect('/e/401')
   }
   if (req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
-    return res.statusCode(403)
+    res.redirect('/e/403')
   }
   if (req.session.user_id === urlDatabase[req.params.shortURL].userID) {
     urlDatabase[req.params.shortURL].longURL = req.body.longURL;
@@ -231,10 +232,10 @@ app.post("/urls/:shortURL", (req, res) => {
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   if (!req.session.user_id) {
-    return res.statusCode(401)
+    res.redirect('/e/401')
   }
   if (req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
-    return res.statusCode(403)
+    res.redirect('/e/403')
   }
   if (req.session.user_id === urlDatabase[req.params.shortURL].userID) {
     delete urlDatabase[req.params.shortURL];
@@ -242,13 +243,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
+// Start the A🅿️🅿️
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });

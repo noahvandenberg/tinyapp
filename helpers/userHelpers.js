@@ -25,7 +25,6 @@ const createAdminUser = (bcrypt) => {
   return admin
 };
 
-
 module.exports = {
   getUserByEmail,
   getUrlsByUser,

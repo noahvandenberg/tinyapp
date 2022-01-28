@@ -11,27 +11,25 @@ app.use(cookie({
   keys: ['NoahLikesPie']
 }));
 
-const logger = require('morgan')
+const logger = require('morgan');
 app.use(logger("dev"));
 
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
 
 const generateRandomString = () => {
   return Math.random().toString(36).slice(7);
 };
 
-const userHelpers = require('./helpers/userHelpers')
-
-
+const userHelpers = require('./helpers/userHelpers');
 
 const urlDatabase = {
   b6UTxQ: {
-      longURL: "https://www.tsn.ca",
-      userID: "admin"
+    longURL: "https://www.tsn.ca",
+    userID: "admin"
   },
   i3BoGr: {
-      longURL: "https://www.google.ca",
-      userID: "admin"
+    longURL: "https://www.google.ca",
+    userID: "admin"
   }
 };
 
@@ -43,7 +41,6 @@ const users = {
   },
 };
 users.admin = userHelpers.createAdminUser(bcrypt);
-console.log(users)
 
 
 
@@ -56,7 +53,7 @@ app.get("/", (req, res) => {
   }
 
   if (!req.session.user_id) {
-    console.log(false)
+    console.log(false);
     res.redirect("/login");
   }
 
@@ -64,7 +61,7 @@ app.get("/", (req, res) => {
 
 app.get("/register", (req, res) => {
   if (req.session.user_id) {
-    res.redirect('/urls')
+    res.redirect('/urls');
   }
 
   if (!req.session.user_id) {
@@ -78,7 +75,7 @@ app.get("/register", (req, res) => {
 
 app.get("/login", (req, res) => {
   if (req.session.user_id) {
-    res.redirect('/urls')
+    res.redirect('/urls');
   }
 
   if (!req.session.user_id) {
@@ -94,11 +91,11 @@ app.get("/urls", (req, res) => {
 
   if (!req.session.user_id) {
     //SHOULD REDIRECT TO RELEVENT ERROR PAGE
-    res.redirect('/login')
+    res.redirect('/login');
   }
 
   if (req.session.user_id) {
-    const usersUrls = userHelpers.getUrlsByUser(req.session.user_id, urlDatabase)
+    const usersUrls = userHelpers.getUrlsByUser(req.session.user_id, urlDatabase);
 
     const templateVars = {
       urls: usersUrls,
@@ -112,7 +109,7 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   if (!req.session.user_id) {
-    res.redirect('/login')
+    res.redirect('/login');
   }
 
   if (req.session.user_id) {
@@ -127,21 +124,21 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
 
-  const shortURL = req.params.shortURL
+  const shortURL = req.params.shortURL;
 
   if (!req.session.user_id) {
-      // SHOULD REDIRECT TO USER NOT LOGGED IN ERROR PAGE
-      res.redirect('/login')
+    // SHOULD REDIRECT TO USER NOT LOGGED IN ERROR PAGE
+    res.redirect('/login');
   }
 
   if (!urlDatabase.hasOwnProperty(shortURL)) {
     // SHOULD REDIRECT TO PAGE NOT FOUND ERROR PAGE
-    res.redirect('/urls')
+    res.redirect('/urls');
   }
 
   if (urlDatabase[shortURL].userID !== req.session.user_id) {
     // SHOULD REDIRECT TO FOREBIDDEN / NOT AUTHORIZED ERROR PAGE
-    res.redirect('/urls')
+    res.redirect('/urls');
   }
 
   if (urlDatabase[shortURL].userID === req.session.user_id && req.session.user_id) {
@@ -160,7 +157,7 @@ app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase[req.params.shortURL]) {
     // SHOULD REDIRECT TO PAGE NOT FOUND ERROR PAGE
     res.statusCode = 400;
-    res.redirect('/urls')
+    res.redirect('/urls');
   }
   if (urlDatabase[req.params.shortURL]) {
     const longURL = urlDatabase[req.params.shortURL].longURL;
@@ -176,7 +173,7 @@ app.post("/register", (req, res) => {
     res.redirect('/register');
   }
 
-  const userID = userHelpers.getUserByEmail(req.body.email,users)
+  const userID = userHelpers.getUserByEmail(req.body.email,users);
 
   if (userID) {
     // USER ALREADY EXITS SEND ERROR
@@ -192,7 +189,7 @@ app.post("/register", (req, res) => {
       password: bcrypt.hashSync(req.body.password, 10)
     };
   
-    req.session.user_id = newUserId
+    req.session.user_id = newUserId;
     res.redirect('/urls');
   }
 
@@ -206,23 +203,23 @@ app.post("/login", (req, res) => {
     res.redirect('/register');
   }
 
-  const userID = userHelpers.getUserByEmail(req.body.email,users)
+  const userID = userHelpers.getUserByEmail(req.body.email,users);
 
   if (!userID) {
     // USER DOES NOT EXIST
     res.redirect('/login');
   }
 
-  const userEmail = users[userID].email
-  const userPassword = users[userID].password 
+  const userEmail = users[userID].email;
+  const userPassword = users[userID].password;
 
   if (!bcrypt.compareSync(req.body.password, userPassword)) {
     // SHOULD REDIRECT TO BAD PASSWORD IN ERROR PAGE
     res.redirect('/login');
   }
 
-  if (bcrypt.compareSync(req.body.password, userPassword) ) {
-    req.session.user_id = userID
+  if (bcrypt.compareSync(req.body.password, userPassword)) {
+    req.session.user_id = userID;
     res.redirect('/urls');
   }
 });
@@ -232,12 +229,11 @@ app.post("/logout", (req, res) => {
   res.redirect('/urls');
 });
 
-// Create / Update / Delete shortUrls
 app.post("/urls", (req, res) => {
   if (!req.session.user_id) {
     // SHOULD REDIRECT TO NOT LOGGED / NOT AUTHED IN ERROR PAGE
     res.statusCode = 400;
-    res.end()
+    res.end();
   }
   if (req.session.user_id) {
     const newLinkID = generateRandomString();
@@ -245,7 +241,7 @@ app.post("/urls", (req, res) => {
     urlDatabase[newLinkID] = {
       longURL: `http://${req.body.longURL}`,
       userID: req.session.user_id
-  }
+    };
     res.redirect(`/urls/${newLinkID}`);
   }
 });
@@ -255,13 +251,13 @@ app.post("/urls/:shortURL", (req, res) => {
   if (!req.session.user_id) {
     // SHOULD REDIRECT TO NOT LOGGED IN IN ERROR PAGE
     res.statusCode = 401;
-    res.redirect('/login')
+    res.redirect('/login');
   }
   
   if (req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
     // SHOULD REDIRECT TO NOT AUTHED IN ERROR PAGE
     res.statusCode = 403;
-    res.redirect('/urls')
+    res.redirect('/urls');
   }
 
   if (req.session.user_id === urlDatabase[req.params.shortURL].userID) {
@@ -275,20 +271,18 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   if (!req.session.user_id) {
     // SHOULD REDIRECT TO NOT LOGGED IN IN ERROR PAGE
     res.statusCode = 401;
-    res.redirect('/login')
+    res.redirect('/login');
   }
   if (req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
     // SHOULD REDIRECT TO NOT AUTHED IN ERROR PAGE
     res.statusCode = 403;
-    res.redirect('/urls')
+    res.redirect('/urls');
   }
   if (req.session.user_id === urlDatabase[req.params.shortURL].userID) {
     delete urlDatabase[req.params.shortURL];
     res.redirect("/urls");
   }
 });
-
-
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);

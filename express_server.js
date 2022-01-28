@@ -72,11 +72,17 @@ app.get("/", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const templateVars = {
-    users: users,
-    user_id: req.session.user_id
-  };
-  res.render("urls_register", templateVars);
+  if (req.session.user_id) {
+    res.redirect('/urls')
+  }
+
+  if (!req.session.user_id) {
+    const templateVars = {
+      users: users,
+      user_id: req.session.user_id
+    };
+    res.render("urls_register", templateVars);
+  }
 });
 
 app.get("/login", (req, res) => {

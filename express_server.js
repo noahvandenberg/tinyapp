@@ -221,7 +221,7 @@ app.post("/urls/:shortURL", (req, res) => {
     res.redirect('/e/403')
   }
   if (req.session.user_id === urlDatabase[req.params.shortURL].userID) {
-    urlDatabase[req.params.shortURL].longURL = req.body.longURL;
+    urlDatabase[req.params.shortURL].longURL = userHelpers.parseURL(req.body.longURL);
     res.redirect("/urls");
   }
 });

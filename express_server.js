@@ -82,7 +82,7 @@ app.get("/login", (req, res) => {
 
 app.get("/urls", (req, res) => {
   if (!users.hasOwnProperty(req.session.user_id)) {
-    res.redirect('/login');
+    res.redirect('/e/403');
   }
   if (users.hasOwnProperty(req.session.user_id)) {
     const usersUrls = userHelpers.getUrlsByUser(req.session.user_id, urlDatabase);
